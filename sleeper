@@ -1,0 +1,155 @@
+#!/bin/bash
+#===============================================================================
+#
+#          FILE:  sleeper
+# 
+#         USAGE:  ./sleeper
+# 
+#   DESCRIPTION:  This file forces the user to take some rest at a precise interval. 
+# 
+#       OPTIONS:  ---
+#  REQUIREMENTS:  zenity
+#          BUGS:  ---
+#         NOTES:  contact at lordamit@gmail.com
+#        AUTHOR:  Amit Seal Ami
+#       COMPANY:  http://lordamit.blogspot.com
+#       VERSION:  3.0-bengali
+#      REVISION:  ---
+#==========================================================================
+
+#variables
+sleeperExists="Sleeper Exists"
+
+sleepThanks="ঘুমপাড়ানি ব্যবহারের জন্য ধন্যবাদ।"
+
+sleepInstalled="ঘুমপাড়ানি কপি করে \n/usr/bin/\n এ রাখা হয়েছে। আপনি চাইলেই এখন এটি\nAlt+F2 টিপে sleeper টাইপ করে চালাতে পারেন।"
+
+sleepWelcome="Welcome to sleeper.
+Please don't use any argument to use this effectively.
+To stop the sleeper, please press the cancel button on sleeper progress.
+Made by LordAmit"
+sleepMinute="আপনার নির্ধারিত  বিরতি দিন(মিনিটে)"
+sleepInstallWarn="ঘুমপাড়ানি এখন \n/usr/bin/\nএ sleeperরাখার চেষ্টা করবে। পাসওয়ার্ড চাইলে দেবেন"
+
+#functions
+function sleepdetect ()
+{
+	#detects existence of sleeper under /usr/bin/
+	if [[ -e /usr/bin/sleeper ]]; then
+		#statements
+	
+	echo "$sleeperExists"
+	else
+	 #else statement
+	 	presentDirectory=$(pwd)
+	 	zenity --info --text="$sleepInstallWarn"
+		sudo cp $presentDirectory/sleeper /usr/bin/
+		zenity --info --text="$sleepInstalled"
+		exit 0
+	 fi
+
+}    # ----------  end of function sleepdetect  ----------
+
+
+
+function sleephelp ()
+{
+	#function sleephelp prepares a help document under the .sleeper folder of user's directory
+        
+        if [[ ! -d $HOME/.sleeper ]]; then
+
+		mkdir $HOME/.sleeper
+		
+	echo "$sleepWelcome">$HOME/.sleeper/help
+	xterm -hold -T "Sleeper Help" -n "Sleeper Help" -e cat $HOME/.sleeper/help
+	
+	else
+
+	#	rm -r $HOME/.sleeper
+		xterm -hold -T "Sleeper Help" -n "Sleeper Help" -e cat $HOME/.sleeper/help
+	fi
+	
+}
+
+
+function dosleep ()
+{
+	tim=`date +"%I:%M %p" `
+	#variable which are here forcedly
+	sleeperInfo="$tim\nঘুমপাড়ানি $bninterval মিনিট বিরতি তে চালু হবে। আগে অবশ্য OK দিতে হবে।\nঘুমপাড়ানি গ্রাফে cancel দিলে ঘুমপাড়ানি বন্ধ হবে।\nClose করে দিলে সাথে সাথে পিসি লক হবে।"
+
+	zenity --info --title="ঘুমপাড়ানি তথ্য" --text="$sleeperInfo"
+	
+	#calculations to convert time to 100 units
+	
+	let timeer=$interval*60
+	let sleeptime=$timeer/100	
+
+	while [ true ]; do
+
+       		for (( i = 1; i <= 100; i++ )); do
+
+			sleep $sleeptime		
+			echo $i
+       	
+        	done | zenity --progress --auto-kill --auto-close --title="গ্রাফ" --text="ঘুমপাড়ানি অগ্রযাত্রা"
+
+#	     	tim2=`date +"%I:%M %p" `     
+	
+		gnome-screensaver-command --lock
+      done 
+}
+
+#function dosleep ends here
+
+#detects command line arguments
+
+if [[ $# > 0 ]]; then
+
+	sleephelp
+
+	exit 0
+fi
+
+#main program execution starts here
+sleepdetect
+
+bninterval=$(zenity --list --text="$sleepMinute" --radiolist --column "পছন্দ" --column "মিনিট" TRUE ১০ FALSE ২০ FALSE ৩০ FALSE ৪০ FALSE ৫০ FALSE ৬০);
+
+#case to convert bengali time interval to english value
+case $bninterval in
+	১০)
+		interval=10	
+	;;
+	২০)
+		interval=20		
+	;;
+	৩০)
+		interval=30		
+	;;
+	৪০)
+		interval=40		
+	;;
+	৫০)
+		interval=50		
+	;;
+	৬০)
+		interval=60		
+	;;
+	
+	*)
+		
+	;;
+esac
+
+echo $interval
+
+#echo 
+if [[ $interval -lt 10 || $interval -gt 60 ]]; then
+	zenity --info --text="$sleepThanks" 
+	exit 0
+fi
+
+#echo 
+dosleep
+exit 0
