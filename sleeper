@@ -22,7 +22,7 @@ sleeperExists="Sleeper Exists"
 
 sleepThanks="ঘুমপাড়ানি ব্যবহারের জন্য ধন্যবাদ।"
 
-sleepInstalled="ঘুমপাড়ানি কপি করে \n/usr/bin/\n এ রাখা হয়েছে। আপনি চাইলেই এখন এটি\nAlt+F2 টিপে sleeper টাইপ করে চালাতে পারেন।"
+sleepInstalled="ঘুমপাড়ানি কপি করে \n/usr/bin/\n এ রাখা হয়েছে। আপনি চাইলেই এখন এটি\nAlt+F2 টিপে sleeper টাইপ করে চালাতে পারেন। কিছু ক্ষেত্রে পারমিশন জনিত সমস্যা হতে পারে। সেক্ষেত্রে টারমিনালে sudo chmod +x /usr/bin/sleeper কমান্ড টি রান করে সমাধান পাবেন। "
 
 sleepWelcome="Welcome to sleeper.
 Please don't use any argument to use this effectively.
